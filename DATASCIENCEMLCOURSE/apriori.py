@@ -17,7 +17,7 @@ import pandas as pd
 
 dataset = pd.read_csv('Market_Basket_Optimisation.csv', header = None)
 
-def apriori(data_set, sample_size):
+def MyAprioriModel(data_set, sample_size):
     transactions = []
     for i in range(0, 7501):
         transactions.append([str(data_set.values[i,j]) for j in range(0, sample_size)])
