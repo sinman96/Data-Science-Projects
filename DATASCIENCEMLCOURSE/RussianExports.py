@@ -35,7 +35,25 @@ EU_countries = ['Austria', 'Belgium', 'Bulgaria', 'Croatia',
 dataset = dataset[dataset['Partner'].isin(EU_countries)]
 print(dataset)
 print(dataset.nunique())
-dataset_fields = len(dataset.columns)
+#Find the amount traded in exports with each country
+export_totals = []
+for i in range(0,len(EU_countries)):
+    export_totals.append(dataset[dataset.Partner == EU_countries[i]]
+    ['Trade Value (US$)'].sum())
+export_total = sum(export_totals)
+for i in range(0, len(export_totals)):
+    export_totals[i] /= export_total
+print(export_totals)
+#Display a random value for context
+print(dataset.values[1000])
+#Weighted percentages of trade with each country over this time
+most_traded_countries = []
+for i in range(0, len(EU_countries)):
+    most_traded_countries.append([EU_countries[i],export_totals[i]])
+print(most_traded_countries)
 
-#MyAprioriModel(data_slice, dataset_fields)
-#dataset = dataset.sort_values(by = 'Year')
+df = pd.DataFrame({'Percentage of Russian EU exports': export_totals},
+                  index= EU_countries)
+plot = df.plot.pie(figsize=(20, 20), subplots = "True")
+plt.title('Russian EU export partners', fontsize = 20)
+plt.legend(loc ='lower left')
