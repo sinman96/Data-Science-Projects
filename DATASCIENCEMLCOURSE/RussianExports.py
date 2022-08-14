@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from MyApriori import *
 from RussianExportsFunctions import *
+
 """## Data Preprocessing"""
 dataset = pd.read_csv('RUStoWorldTrade.csv')
 original_dataset_length = len(dataset)
@@ -35,25 +36,27 @@ EU_countries = ['Austria', 'Belgium', 'Bulgaria', 'Croatia',
 dataset = dataset[dataset['Partner'].isin(EU_countries)]
 print(dataset)
 print(dataset.nunique())
-#Find the amount traded in exports with each country
-export_totals = []
-for i in range(0,len(EU_countries)):
-    export_totals.append(dataset[dataset.Partner == EU_countries[i]]
-    ['Trade Value (US$)'].sum())
-export_total = sum(export_totals)
-for i in range(0, len(export_totals)):
-    export_totals[i] /= export_total
-print(export_totals)
 #Display a random value for context
 print(dataset.values[1000])
-#Weighted percentages of trade with each country over this time
-most_traded_countries = []
-for i in range(0, len(EU_countries)):
-    most_traded_countries.append([EU_countries[i],export_totals[i]])
-print(most_traded_countries)
+#Find the amount traded in exports with each country
+pre_georgia_invasion_dataset = dataset[dataset['Year'] == 2007]
+post_georgia_invasion_dataset = dataset[(dataset['Year']>= 2009) 
+                                        & (dataset['Year']<= 2013)]
+post_crimea_invasion_dataset = dataset[dataset['Year']>= 2015]
 
-df = pd.DataFrame({'Percentage of Russian EU exports': export_totals},
-                  index= EU_countries)
-plot = df.plot.pie(figsize=(20, 20), subplots = "True")
-plt.title('Russian EU export partners', fontsize = 20)
-plt.legend(loc ='lower left')
+#Displaying findings from the data over these two time periods
+euexportinformation(pre_georgia_invasion_dataset
+                    , EU_countries, 'Pre Georgia Invasion')
+euexportinformation(pre_georgia_invasion_dataset
+                    , EU_countries, 'Pre Crimea/post Georgia invasion')
+euexportinformation(post_crimea_invasion_dataset
+                    , EU_countries, 'Post Crimea invasion')
+
+
+
+
+
+
+
+
+
