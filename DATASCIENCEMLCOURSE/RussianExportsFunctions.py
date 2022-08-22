@@ -19,7 +19,7 @@ def dataprocessor(dataset):
                   " column has multiple data types.")
     if (unique_data_types_count == len(dataset.columns)):
         print("Each column of the dataset has a unique data type," +
-              "so the data set is ready to be processed.")
+              " so the data set is ready to be processed.")
         #If all data points in a column are the same drop the columns    
         constant_data_fields = []
     for i in range(0, len(dataset.columns)):
@@ -30,6 +30,8 @@ def dataprocessor(dataset):
         dataset = dataset.drop(constant_data_fields[i], axis = 1)
         #Printing unique data columns and how many unique elements they have
     print(dataset.nunique())
+    
+    
 def euexportinformation(data, datasubset, time_period):
     #Find the amount traded in exports with each country
     export_totals = []
@@ -51,31 +53,51 @@ def euexportinformation(data, datasubset, time_period):
     plt.legend(loc ='lower left')
     return export_totals
 
+def euexportchanges(phase3, phase2, phase1, countries):
+    percentage_changes1to2 = []
+    percentage_changes2to3 = []
+    eu_changes = []
+    for i in range(0,len(phase1)):
+        percentage_changes1to2.append(
+        100 *(phase2[i] - phase1[i])/phase1[i])
+        percentage_changes2to3.append(
+        100 *(phase3[i] - phase2[i])/phase2[i])
+        
+    for i in range(0, len(countries)):
+        eu_changes.append([countries[i], percentage_changes1to2[i],
+                          percentage_changes2to3[i]])
+    df = pd.DataFrame(eu_changes, columns=
+                      ['Country',
+                       'Post Georgia trade % change',
+                       'Post Crimea trade % change'])
+    ax = df.plot.bar()
+    plt.xticks(range(len(df)),df['Country'])
+    plt.legend(loc='upper left')
+    plt.show()
+
+
 def ModelAccuracy(data):
     #Default predictive data split
-    X1 = data.iloc[:, :2].values
-    X2 = data.iloc[:, 3:].values
-    X = con = np.concatenate((X1, X2), axis=1)
-    y = data.iloc[:, 2].values
+    X = data.iloc[:, :-1].values
+    y = data.iloc[:, -1].values
+    print(X)
     #Only non numeric fields are Partner and Commodity, so those will be encoded
     from sklearn.compose import ColumnTransformer
     from sklearn.preprocessing import OneHotEncoder
     ct1 = ColumnTransformer(transformers=[('encoder',
-    OneHotEncoder(sparse = False), [2])], remainder='passthrough')
+    OneHotEncoder(sparse = False), [3])], remainder='passthrough')
     X = np.array(ct1.fit_transform(X))
-    print(X)
-
+    
     """## Splitting the dataset into the Training set and Test set"""
     from sklearn.model_selection import train_test_split
     X_train, X_test, y_train, y_test = train_test_split(X, y,
     test_size = 0.25, random_state = 0)
  
-
     from xgboost import XGBClassifier
     classifier = XGBClassifier()
     classifier.fit(X_train, y_train)
-    """## Making the Confusion Matrix"""
 
+    """## Making the Confusion Matrix"""
     from sklearn.metrics import confusion_matrix, accuracy_score
     y_pred = classifier.predict(X_test)
     cm = confusion_matrix(y_test, y_pred)

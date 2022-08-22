@@ -4,11 +4,9 @@ Created on Mon Jul 25 14:40:58 2022
 
 @author: User
 """
-
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-from MyApriori import *
 from RussianExportsFunctions import *
 
 """## Data Preprocessing"""
@@ -34,32 +32,44 @@ EU_countries = ['Austria', 'Belgium', 'Bulgaria', 'Croatia',
                 'Poland', 'Portugal', 'Romania', 'Slovakia', 
                 'Slovenia', 'Spain', 'Sweden']
 dataset = dataset[dataset['Partner'].isin(EU_countries)]
+mean_trade_value = dataset["Trade Value (US$)"].mean()
+dataset["Large trades"] = dataset["Trade Value (US$)"] > mean_trade_value 
 print(dataset)
 print(dataset.nunique())
 #Display a random value for context
 print(dataset.values[1000])
 #Find the amount traded in exports with each country
-pre_georgia_invasion_dataset = dataset[dataset['Year'] == 2007]
+pre_georgia_dataset = dataset[dataset['Year'] == 2007]
 
-post_georgia_invasion_dataset = dataset[(dataset['Year'] >= 2009) 
+post_georgia_dataset = dataset[(dataset['Year'] >= 2009) 
                                         & (dataset['Year'] <= 2013)]
-post_crimea_invasion_dataset = dataset[dataset['Year'] >= 2015]
+post_crimea_dataset = dataset[dataset['Year'] >= 2015]
 
 #Displaying findings from the data over these two time periods
-euexportinformation(pre_georgia_invasion_dataset
-                    , EU_countries, 'Pre Georgia Invasion')
-euexportinformation(post_georgia_invasion_dataset
-                    , EU_countries, 'Pre Crimea/post Georgia invasion')
-euexportinformation(post_crimea_invasion_dataset
-                    , EU_countries, 'Post Crimea invasion')
+euexportinformation(pre_georgia_dataset
+                    , EU_countries, 'Pre Georgia')
+phase1 = euexportinformation(pre_georgia_dataset
+                    , EU_countries, 'Pre Georgia')
+
+euexportinformation(post_georgia_dataset
+                    , EU_countries, 'Pre Crimea/post Georgia')
+phase2 = euexportinformation(post_georgia_dataset
+                    , EU_countries, 'Pre Crimea/post Georgia')
+
+euexportinformation(post_crimea_dataset
+                    , EU_countries, 'Post Crimea')
+phase3 = euexportinformation(post_crimea_dataset
+                    , EU_countries, 'Post Crimea')
+euexportchanges(phase3, phase2, phase1, EU_countries)
 
 #To display the ordering of the fields
 print("First data entry")
 #From these we can see what indexes of categorical fields
 print(dataset.iloc[0])
-#
-ModelAccuracy(pre_georgia_invasion_dataset)
-ModelAccuracy(post_georgia_invasion_dataset)
-ModelAccuracy(post_crimea_invasion_dataset)
+ModelAccuracy(pre_georgia_dataset)
+ModelAccuracy(post_georgia_dataset)
+ModelAccuracy(post_crimea_dataset)
+#Obtained 100% accuracy in predictions of the model accuracy after applying
+#XGBoost and K cross fold validation.
 
 
