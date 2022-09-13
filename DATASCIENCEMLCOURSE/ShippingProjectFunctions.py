@@ -30,8 +30,15 @@ def dataprocessor(dataset):
         dataset = dataset.drop(constant_data_fields[i], axis = 1)
         #Printing unique data columns and how many unique elements they have
     print(dataset.nunique())
-    
-def ModelAccuracy(data):
+# Draw Plot
+def plot_df(df, x, y, Title, Ylabel, dpi=100):
+    plt.figure(figsize=(16,5), dpi=dpi)
+    plt.plot(x, y, color='tab:red')
+    plt.gca().set(title=Title, xlabel = "Date", ylabel=Ylabel)
+    plt.show()
+
+     
+def modelaccuracy(data):
     #Default predictive data split
     X = data.iloc[:, :-1].values
     y = data.iloc[:, -1].values
