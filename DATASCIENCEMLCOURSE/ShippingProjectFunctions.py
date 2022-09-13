@@ -42,14 +42,7 @@ def modelaccuracy(data):
     #Default predictive data split
     X = data.iloc[:, :-1].values
     y = data.iloc[:, -1].values
-    print(X)
-    #Only non numeric fields are Partner and Commodity, so those will be encoded
-    from sklearn.compose import ColumnTransformer
-    from sklearn.preprocessing import OneHotEncoder
-    ct1 = ColumnTransformer(transformers=[('encoder',
-    OneHotEncoder(sparse = False), [3])], remainder='passthrough')
-    X = np.array(ct1.fit_transform(X))
-    
+    print(X)    
     """## Splitting the dataset into the Training set and Test set"""
     from sklearn.model_selection import train_test_split
     X_train, X_test, y_train, y_test = train_test_split(X, y,
