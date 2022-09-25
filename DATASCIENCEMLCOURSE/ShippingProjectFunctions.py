@@ -36,28 +36,45 @@ def plot_df(df, x, y, Title, Ylabel, dpi=100):
     plt.plot(x, y, color='tab:red')
     plt.gca().set(title=Title, xlabel = "Date", ylabel=Ylabel)
     plt.show()
-
+    
+def regression(X,y): 
+    X = X.reshape(-1,1)
+    y = y.reshape(-1,1)
+    print(X)
+    print(y)
+    #Splitting into Test and Train
+    from sklearn.model_selection import train_test_split
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 1/3, random_state = 0)
+    #Importing Linear Regression and fitting the model
+    from sklearn.linear_model import LinearRegression
+    regressor = LinearRegression()
+    regressor.fit(X_train, y_train)
+    #predicting test results
+    y_pred = regressor.predict(X_test)
+    #Visualise trained data results through a plot
+    plt.scatter(X_train, y_train, color = 'red')
+    plt.plot(X_train, regressor.predict(X_train), color = 'blue')
+    plt.title('Gross_Weight vs Freight Cost (Training set)')
+    plt.xlabel('Gross_Weight')
+    plt.ylabel('Freight Cost')
+    plt.show()
+    #Visualise trained data results through a plot
+    plt.scatter(X_test, y_test, color = 'maroon')
+    plt.plot(X_test, y_pred, color = 'blue')
+    plt.title('Gross_Weight vs Freight Cost (Test set)')
+    plt.xlabel('Gross_Weight')
+    plt.ylabel('Freight Cost')
+    plt.show()
      
 def modelaccuracy(data):
     #Default predictive data split
-    X = data.iloc[:, :-1].values
-    y = data.iloc[:, -1].values
-    print(X)    
+    X_train = data.iloc[:, 2:-1].values
+    y_train = data.iloc[:, -1].values
+    print(X_train)    
     """## Splitting the dataset into the Training set and Test set"""
-    from sklearn.model_selection import train_test_split
-    X_train, X_test, y_train, y_test = train_test_split(X, y,
-    test_size = 0.25, random_state = 0)
- 
     from xgboost import XGBClassifier
     classifier = XGBClassifier()
     classifier.fit(X_train, y_train)
-
-    """## Making the Confusion Matrix"""
-    from sklearn.metrics import confusion_matrix, accuracy_score
-    y_pred = classifier.predict(X_test)
-    cm = confusion_matrix(y_test, y_pred)
-    print(cm)
-    print(accuracy_score(y_test, y_pred))
 
     """## Applying K-Fold Cross Validation##"""
     from sklearn.model_selection import cross_val_score
