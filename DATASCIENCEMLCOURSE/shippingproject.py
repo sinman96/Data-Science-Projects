@@ -40,20 +40,38 @@ print((len(dataset[(dataset['drop_off_point'] == "X")
 #points Y are in India
 print(dataset)
 print(dataset.columns)
-regression(dataset['gross_weight'].values, dataset['freight_cost'].values)
+regression(dataset['gross_weight'].values, dataset['freight_cost'].values,
+'Gross_weight', 'Freight_cost')
 dataset['shipping_cost_in($)'] = dataset['freight_cost'] + dataset['gross_weight']*dataset['shipment_charges']
 print(dataset)
 print(dataset.columns)
-dataset = dataset.drop(['freight_cost','shipment_charges',], axis = 1)
+dataset = dataset.drop(['freight_cost','shipment_charges'], axis = 1)
 print(dataset)
 print(dataset.columns)
 
-India = dataset[dataset.destination_country == 'IN']
-India = India.drop(['drop_off_point','destination_country'], axis = 1)
-print(India)
-print(India.columns)
+India_Air = dataset[(dataset.destination_country == 'IN') &
+(dataset.shipment_mode == 'Air')]
+India_Air = India_Air.drop(['drop_off_point','destination_country',
+'shipment_mode'], axis = 1)
+print(India_Air.nunique())
+regression(India_Air['shipping_time'].values, India_Air['shipping_cost_in($)'].values,
+'Shipping_time', 'Shipping_cost_in($)')
+
+India_Ocean = dataset[(dataset.destination_country == 'IN') &
+(dataset.shipment_mode == 'Ocean')]
+India_Ocean = India_Ocean.drop(['drop_off_point','destination_country',
+'shipment_mode'], axis = 1)
+print(India_Ocean.nunique())
+India_Ocean = India_Ocean.drop(['shipping_company'], axis = 1)
+regression(India_Ocean['shipping_time'].values, India_Ocean['shipping_cost_in($)'].values,
+'Shipping_time', 'Shipping_cost_in($)')
+print(India_Ocean.nunique())
+
 
 Bangladesh = dataset[dataset.destination_country == 'BD']
 Bangladesh = Bangladesh.drop(['drop_off_point','destination_country'], axis = 1)
-print(Bangladesh)
-print(Bangladesh.columns)
+print(Bangladesh.nunique())
+Bangladesh_Ocean = Bangladesh
+Bangladesh_Ocean = Bangladesh_Ocean.drop(['shipment_mode'], axis = 1)
+print(Bangladesh_Ocean.nunique())
+
