@@ -9,7 +9,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from shippingprojectfunctions import *
-
 """## Importing the dataset"""
 #People have split this dataset but I'll merge it resplit it to
 dataset = pd.read_csv('shipping_train.csv')
@@ -35,7 +34,8 @@ print(len(dataset))
 print(len((dataset[(dataset['drop_off_point'] == "Y")
                & (dataset['destination_country'] == "BD")])))
 print((len(dataset[(dataset['drop_off_point'] == "X")
-               & (dataset['destination_country'] == "IN")])))  
+               & (dataset['destination_country'] == "IN")])))
+dataset = dataset.drop(['drop_off_point'], axis = 1) 
 #From this we can tell all drop+off points X are in Bangladesh and all drop off 
 #points Y are in India
 print(dataset)
@@ -49,29 +49,54 @@ dataset = dataset.drop(['freight_cost','shipment_charges'], axis = 1)
 print(dataset)
 print(dataset.columns)
 
-India_Air = dataset[(dataset.destination_country == 'IN') &
-(dataset.shipment_mode == 'Air')]
-India_Air = India_Air.drop(['drop_off_point','destination_country',
-'shipment_mode'], axis = 1)
-print(India_Air.nunique())
-regression(India_Air['shipping_time'].values, India_Air['shipping_cost_in($)'].values,
-'Shipping_time', 'Shipping_cost_in($)')
+SC1_India = dataset[(dataset.shipping_company == 'SC1') &
+(dataset.destination_country == 'IN')]
+SC1_India = SC1_India.drop(['shipping_company', 'destination_country'], axis = 1)
+print(SC1_India.nunique())
+print("SC1_India_min_time: %.2f" % (SC1_India['shipping_time'].min()))
+print("SC1_India_mean_time: %.2f" % (SC1_India['shipping_time'].mean()))
+print("SC1_India_max_time: %.2f" % (SC1_India['shipping_time'].max()))
+print("SC1_India_std_time: %.2f" % (SC1_India['shipping_time'].std()))
 
-India_Ocean = dataset[(dataset.destination_country == 'IN') &
-(dataset.shipment_mode == 'Ocean')]
-India_Ocean = India_Ocean.drop(['drop_off_point','destination_country',
-'shipment_mode'], axis = 1)
-print(India_Ocean.nunique())
-India_Ocean = India_Ocean.drop(['shipping_company'], axis = 1)
-regression(India_Ocean['shipping_time'].values, India_Ocean['shipping_cost_in($)'].values,
-'Shipping_time', 'Shipping_cost_in($)')
-print(India_Ocean.nunique())
+SC2_India = dataset[(dataset.shipping_company == 'SC2') &
+(dataset.destination_country == 'IN')]
+SC2_India = SC2_India.drop(['shipping_company', 'destination_country'], axis = 1)
+print(SC2_India.nunique())
+print("SC2_India_min_time: %.2f" % (SC2_India['shipping_time'].min()))
+print("SC2_India_mean_time: %.2f" % (SC2_India['shipping_time'].mean()))
+print("SC2_India_max_time: %.2f" % (SC2_India['shipping_time'].max()))
+print("SC2_India_std_time: %.2f" % (SC2_India['shipping_time'].std()))
+
+SC3_India = dataset[(dataset.shipping_company == 'SC3') &
+(dataset.destination_country == 'IN')]
+SC3_India = SC3_India.drop(['shipping_company', 'destination_country'], axis = 1)
+print(SC3_India.nunique())
+print("SC3_India_min_time: %.2f" % (SC3_India['shipping_time'].min()))
+print("SC3_India_mean_time: %.2f" % (SC3_India['shipping_time'].mean()))
+print("SC3_India_max_time: %.2f" % (SC3_India['shipping_time'].max()))
+print("SC3_India_std_time: %.2f" % (SC3_India['shipping_time'].std()))
 
 
-Bangladesh = dataset[dataset.destination_country == 'BD']
-Bangladesh = Bangladesh.drop(['drop_off_point','destination_country'], axis = 1)
-print(Bangladesh.nunique())
-Bangladesh_Ocean = Bangladesh
-Bangladesh_Ocean = Bangladesh_Ocean.drop(['shipment_mode'], axis = 1)
-print(Bangladesh_Ocean.nunique())
+SC1_Bangladesh = dataset[(dataset.shipping_company == 'SC1') &
+(dataset.destination_country == 'BD')]
+SC1_Bangladesh = SC1_Bangladesh.drop(['shipping_company', 'destination_country'], axis = 1)
+print(SC1_Bangladesh.nunique())
+print("SC1_Bangladesh_min_time: %.2f" % (SC1_Bangladesh['shipping_time'].min()))
+print("SC1_Bangladesh_mean_time: %.2f" % (SC1_Bangladesh['shipping_time'].mean()))
+print("SC1_Bangladesh_max_time: %.2f" % (SC1_Bangladesh['shipping_time'].max()))
+print("SC1_Bangladesh_std_time: %.2f" % (SC1_Bangladesh['shipping_time'].std()))
 
+SC2_Bangladesh = dataset[(dataset.shipping_company == 'SC2') &
+(dataset.destination_country == 'BD')]
+SC2_Bangladesh = SC2_Bangladesh.drop(['shipping_company', 'destination_country'], axis = 1)
+print(SC2_Bangladesh.nunique())
+print("SC2_Bangladesh_min_time: %.2f" % (SC2_Bangladesh['shipping_time'].min()))
+print("SC2_Bangladesh_mean_time: %.2f" % (SC2_Bangladesh['shipping_time'].mean()))
+print("SC2_Bangladesh_max_time: %.2f" % (SC2_Bangladesh['shipping_time'].max()))
+print("SC2_Bangladesh_std_time: %.2f" % (SC2_Bangladesh['shipping_time'].std()))
+
+from scipy.stats import ttest_ind
+print(ttest_ind(SC2_India['shipping_time'],
+SC3_India['shipping_time']))
+print(ttest_ind(SC1_Bangladesh['shipping_time'],
+SC2_Bangladesh['shipping_time']))
