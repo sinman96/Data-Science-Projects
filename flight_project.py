@@ -60,7 +60,7 @@ print(df.head(10))
 
 df['%IncreaseFromBaseFare'] = 100*(df['totalFare'] - df['baseFare'])/df['totalFare'] 
 x = df['%IncreaseFromBaseFare']
-df['%IncreaseFromBaseFare']=np.select([x < df['%IncreaseFromBaseFare'].mean(), x >= df['%IncreaseFromBaseFare'].mean()], [0,1])
+df['%IncreaseFromBaseFare'] = np.select([x < 10, x >= 10], [0,1])
 print(df.head(10))
 
 fare_df = df.drop(columns = ['startingAirport', 'destinationAirport', 'airlineName',
