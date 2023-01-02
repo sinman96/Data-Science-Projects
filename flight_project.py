@@ -91,14 +91,31 @@ accuracies = cross_val_score(estimator = classifier, X = X_train, y = y_train, c
 print("Accuracy: {:.2f} %".format(accuracies.mean()*100))
 print("Standard Deviation: {:.2f} %".format(accuracies.std()*100))
 
+"""Using XGBoost regression to predict total fares"""
+X = df.drop(columns = ['totalFare', '%IncreaseFromBaseFare'], axis = 1).values
+y = df[['totalFare']].values
+print(X)
+
+"""## Splitting the dataset into the Training set and Test set"""
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y,
+test_size = 0.25, random_state = 0)
+ 
+from xgboost import XGBRegressor
+regressor = XGBRegressor()
+regressor.fit(X_train, y_train)
+y_pred = regressor.predict(X_test)
+
+from sklearn.metrics import mean_squared_error
+rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+print("RMSE of total fare predictions is: ${:.2f}".format(rmse))
+
 """## Applying Logistic Regression to separate direct and non direct flights##"""
-df.columns.get_loc("isNonStop")
-X = df.iloc[:, 6:8].values
-y = df.iloc[:, 3].values
+X = df[['totalFare', 'durationInHours']].values
+y = df[['isNonStop']].values
 print(X)
 print(y)
-y = y.reshape(len(y),1)
-#Need to reshape y to (10,1) for further analysis
+y = y.reshape(len(y), 1)
 
 #Splitting into Test and Train
 from sklearn.model_selection import train_test_split
@@ -111,16 +128,14 @@ print(X)
 print(y)
 #Importing Support vector Regression and fitting the model
 from sklearn.linear_model import LogisticRegression
-classifier = LogisticRegression(random_state = 0)
-classifier.fit(X_train, y_train)
-#Predict the first entry
-#classifier.predict(sc.transform([[30,87000]]))
+model = LogisticRegression(solver='liblinear', random_state = 0)
+model.fit(X_train, y_train)
+#Predict a random pair
+print(model.predict(sc.transform([[350, 2.5]])))
 #Predicting the test set results
-y_pred = classifier.predict(X_test)
+y_pred = model.predict(X_test)
 #Make confusion matrix to determine accuracy of matrix
 from sklearn.metrics import confusion_matrix, accuracy_score
 cm = confusion_matrix(y_test,y_pred)
 print(cm)
 print(accuracy_score(y_test, y_pred))
-
-
