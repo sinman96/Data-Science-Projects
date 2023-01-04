@@ -1,1 +1,1 @@
-#DataScienceCourse
+#DataScienceProjects
