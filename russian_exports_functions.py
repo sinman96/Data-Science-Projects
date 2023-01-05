@@ -100,19 +100,21 @@ def model_accuracy_aggregates(data):
     from sklearn.metrics import confusion_matrix, accuracy_score
     y_pred = classifier.predict(X_test)
     cm = confusion_matrix(y_test, y_pred)
-    print(cm)
-    print(accuracy_score(y_test, y_pred))
+    import seaborn as sns
+    sns.heatmap(cm, cmap = 'YlGnBu', annot=True)
+    print("RandomForest Classification Accuracy is: {:.2f} %".format(100*accuracy_score(y_test, y_pred)))
 
     """## Applying K-Fold Cross Validation##"""
     from sklearn.model_selection import cross_val_score
     accuracies = cross_val_score(estimator = classifier, X = X_train, y = y_train, cv = 10)
-    print("Accuracy: {:.2f} %".format(accuracies.mean()*100))
-    print("Standard Deviation: {:.2f} %".format(accuracies.std()*100))
+    print("K-Fold-Cross-Validation Accuracy is: {:.2f} %".format(accuracies.mean()*100))
+    print("K-Fold-Cross-Validation Standard Deviation is: {:.2f} %".format(accuracies.std()*100))
 
 def model_accuracy_trades(data):
     #Default predictive data split
     X = data.iloc[:, :-1].values
     y = data.iloc[:, -1].values
+    y = np.squeeze(y)
     print(X)
     #Only non numeric fields are Partner and Commodity, so those will be encoded
     from sklearn.compose import ColumnTransformer
@@ -134,11 +136,12 @@ def model_accuracy_trades(data):
     from sklearn.metrics import confusion_matrix, accuracy_score
     y_pred = classifier.predict(X_test)
     cm = confusion_matrix(y_test, y_pred)
-    print(cm)
-    print(accuracy_score(y_test, y_pred))
+    import seaborn as sns
+    sns.heatmap(cm, cmap = 'BuPu_r', annot=True)
+    print("XGBoost Classification Accuracy is: {:.2f} %".format(100*accuracy_score(y_test, y_pred)))
 
     """## Applying K-Fold Cross Validation##"""
     from sklearn.model_selection import cross_val_score
     accuracies = cross_val_score(estimator = classifier, X = X_train, y = y_train, cv = 10)
-    print("Accuracy: {:.2f} %".format(accuracies.mean()*100))
-    print("Standard Deviation: {:.2f} %".format(accuracies.std()*100))
+    print("K-Fold-Cross-Validation Accuracy is: {:.2f} %".format(accuracies.mean()*100))
+    print("K-Fold-Cross-Validation Standard Deviation is: {:.2f} %".format(accuracies.std()*100))
