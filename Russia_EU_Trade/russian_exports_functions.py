@@ -1,35 +1,6 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Jul 27 12:34:54 2022
-
-@author: User
-"""        
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-
-def data_processor(dataset):
-    #Checking all data types are unique for each column
-    unique_data_types_count = 0
-    for i in range(0,len(dataset.columns)):
-        if(len([dataset[dataset.columns[i]].dtype]) == 1):
-                unique_data_types_count += 1
-        else:
-            print("The " + dataset.columns[i] +
-                  " column has multiple data types.")
-    if (unique_data_types_count == len(dataset.columns)):
-        print("Each column of the dataset has a unique data type," +
-              " so the data set is ready to be processed.")
-        #If all data points in a column are the same drop the columns    
-        constant_data_fields = []
-    for i in range(0, len(dataset.columns)):
-        if(len(dataset[dataset.columns[i]].unique()) == 1):
-            constant_data_fields.append(dataset.columns[i])
-            #Drop constant_data_fields
-    for i in range(0, len(constant_data_fields)):
-        dataset = dataset.drop(constant_data_fields[i], axis = 1)
-        #Printing unique data columns and how many unique elements they have
-    print(dataset.nunique())
     
     
 def eu_export_information(data, datasubset, time_period):
@@ -75,43 +46,8 @@ def eu_export_changes(phase3, phase2, phase1, countries):
     plt.legend(loc='upper left')
     plt.show()
 
-def model_accuracy_aggregates(data):
-    #Default predictive data split
-    X = data.drop(['Aggregate Level'], axis = 1).values
-    y = data[['Aggregate Level']].values
-    print(X)
-    #Only non numeric fields are Partner and Commodity, so those will be encoded
-    from sklearn.compose import ColumnTransformer
-    from sklearn.preprocessing import OneHotEncoder
-    ct1 = ColumnTransformer(transformers=[('encoder',
-    OneHotEncoder(sparse = False), [2])], remainder='passthrough')
-    X = np.array(ct1.fit_transform(X))
-    
-    """## Splitting the dataset into the Training set and Test set"""
-    from sklearn.model_selection import train_test_split
-    X_train, X_test, y_train, y_test = train_test_split(X, y,
-    test_size = 0.25, random_state = 0)
- 
-    from sklearn.ensemble import RandomForestClassifier
-    classifier = RandomForestClassifier()
-    classifier.fit(X_train, y_train)
-
-    """## Making the Confusion Matrix"""
-    from sklearn.metrics import confusion_matrix, accuracy_score
-    y_pred = classifier.predict(X_test)
-    cm = confusion_matrix(y_test, y_pred)
-    import seaborn as sns
-    sns.heatmap(cm, cmap = 'YlGnBu', annot=True)
-    print("RandomForest Classification Accuracy is: {:.2f} %".format(100*accuracy_score(y_test, y_pred)))
-
-    """## Applying K-Fold Cross Validation##"""
-    from sklearn.model_selection import cross_val_score
-    accuracies = cross_val_score(estimator = classifier, X = X_train, y = y_train, cv = 10)
-    print("K-Fold-Cross-Validation Accuracy is: {:.2f} %".format(accuracies.mean()*100))
-    print("K-Fold-Cross-Validation Standard Deviation is: {:.2f} %".format(accuracies.std()*100))
-
 def model_accuracy_trades(data):
-    #Default predictive data split
+    #Default predictive data split	
     X = data.iloc[:, :-1].values
     y = data.iloc[:, -1].values
     y = np.squeeze(y)
@@ -120,7 +56,7 @@ def model_accuracy_trades(data):
     from sklearn.compose import ColumnTransformer
     from sklearn.preprocessing import OneHotEncoder
     ct1 = ColumnTransformer(transformers=[('encoder',
-    OneHotEncoder(sparse = False), [3])], remainder='passthrough')
+    OneHotEncoder(sparse = False), [2])], remainder='passthrough')
     X = np.array(ct1.fit_transform(X))
     
     """## Splitting the dataset into the Training set and Test set"""
